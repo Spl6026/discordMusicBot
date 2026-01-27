@@ -1,0 +1,17 @@
+services:
+  bot:
+    build: .
+    container_name: discord_yt_bot
+    restart: always
+    env_file:
+      - path: .env
+        required: false
+
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN:-default}
+      
+    volumes:
+      - .:/app
+    
+    stdin_open: true
+    tty: true

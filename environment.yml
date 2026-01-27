@@ -1,0 +1,13 @@
+name: discord_yt_bot
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - ffmpeg
+  - deno
+  - pip
+  - pip:
+    - discord.py
+    - yt-dlp
+    - PyNaCl
