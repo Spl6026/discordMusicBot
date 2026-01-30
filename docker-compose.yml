@@ -12,6 +12,14 @@ services:
       
     volumes:
       - .:/app
-    
+      - yt_cache:/root/.cache/yt-dlp
     stdin_open: true
     tty: true
+
+  bgutil-provider:
+    image: brainicism/bgutil-ytdlp-pot-provider:latest
+    container_name: bgutil-provider
+    restart: always
+      
+volumes:
+  yt_cache:

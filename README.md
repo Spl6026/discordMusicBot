@@ -1,7 +1,8 @@
 # A Bot for Discord to Play Music on YouTube
 
 This is a simple, efficient, and fully containerized **Bot for Discord to play music on YouTube**.
-It is built using **Python (main.py)** and **yt-dlp**, designed to run easily in Docker with **Slash Command** interface.
+
+It is built using **Python (main.py)** and **yt-dlp**, integrated with **[bgutil-ytdlp-pot-provider](https://github.com/Brainicism/bgutil-ytdlp-pot-provider)** (PO Token) to bypass YouTube 403 restrictions. It is designed to run easily in Docker with a **Slash Command** interface.
 
 ## Quick Start
 
@@ -13,7 +14,7 @@ It is built using **Python (main.py)** and **yt-dlp**, designed to run easily in
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/Spl6026/discordMusicBot.git
+    git clone [https://github.com/Spl6026/discordMusicBot.git](https://github.com/Spl6026/discordMusicBot.git)
     cd discordMusicBot
     ```
 
@@ -52,9 +53,10 @@ It is built using **Python (main.py)** and **yt-dlp**, designed to run easily in
 
 ## Tech Stack
 
-* **main.py**: The interface for Discord.
+* **main.py**: The interface for Discord (runs in **CLI Shell Out** mode for stability).
 * **yt-dlp**: The core engine to handle YouTube streams.
-* **FFmpeg**: Audio processing and conversion.
+* **bgutil-ytdlp-pot-provider**: **Sidecar service** for generating PO Tokens (fixes SABR/403 errors).
+* **FFmpeg**: Audio processing and conversion (with header masquerading).
 * **Docker**: Containerization.
 
 ## Environment Variables

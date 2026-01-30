@@ -11,3 +11,4 @@ dependencies:
     - discord.py
     - yt-dlp
     - PyNaCl
+    - bgutil-ytdlp-pot-provider
