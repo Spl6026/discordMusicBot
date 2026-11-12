@@ -1,14 +1,10 @@
 name: discord_yt_bot
 channels:
   - conda-forge
-  - defaults
 dependencies:
-  - python=3.10
+  - python=3.12
   - ffmpeg
-  - deno
+  - deno>=2.9.8
   - pip
   - pip:
-    - discord.py
-    - yt-dlp
-    - PyNaCl
-    - bgutil-ytdlp-pot-provider
+    - -r requirements.txt

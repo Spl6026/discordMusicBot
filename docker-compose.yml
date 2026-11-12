@@ -3,12 +3,16 @@ services:
     build: .
     container_name: discord_yt_bot
     restart: always
+    init: true
+    depends_on:
+      - bgutil-provider
     env_file:
       - path: .env
         required: false
 
     environment:
-      - BOT_TOKEN=${BOT_TOKEN:-default}
+      - BOT_TOKEN=${BOT_TOKEN:?Please set BOT_TOKEN in .env}
+      - BGUTIL_PROVIDER_URL=http://bgutil-provider:4416
       
     volumes:
       - .:/app
@@ -17,9 +21,10 @@ services:
     tty: true
 
   bgutil-provider:
-    image: brainicism/bgutil-ytdlp-pot-provider:latest
+    image: brainicism/bgutil-ytdlp-pot-provider:2.0.2
     container_name: bgutil-provider
     restart: always
+    init: true
       
 volumes:
   yt_cache:

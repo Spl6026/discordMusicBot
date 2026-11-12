@@ -2,3 +2,10 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
+.env.*
+.venv/
+.pytest_cache/
+cookies*.txt
+
+# Development-only files
+/tests/
