@@ -109,7 +109,7 @@ python main.py
 
 ## 測試
 
-`tests/` 目前依專案設定由 Git 忽略，測試檔保留於本機。已有測試檔時，可在上述 Conda 環境執行以下指令。
+`tests/` 包含播放、音訊快取、送包計時、控制按鈕及閒置離開的回歸測試。在上述 Conda 環境中執行以下指令。
 
 ```powershell
 python -m unittest discover -s tests -v
