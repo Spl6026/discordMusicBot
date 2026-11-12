@@ -29,7 +29,7 @@ Linux 下使用 `CLOCK_MONOTONIC_RAW` 控制每 20 毫秒音訊幀的送出時�
 
 需要 Docker Desktop／Docker Engine 與 Docker Compose。
 
-1. 在專案根目錄建立 `.env`，填入 `BOT_TOKEN=你的機器人Token`。
+1. 複製 `.env.example` 為 `.env`，將 `BOT_TOKEN` 改成你的機器人 Token，並依需要調整其他設定。
 2. 在 Discord Developer Portal 的 OAuth2 URL Generator 選擇 bot 與 applications.commands，邀請機器人進入伺服器。授予 View Channels、Send Messages、Embed Links、Connect 與 Speak 權限。
 3. 執行：
 

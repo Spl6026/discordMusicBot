@@ -3,6 +3,7 @@ __pycache__/
 .env
 .DS_Store
 .env.*
+!.env.example
 .venv/
 .pytest_cache/
 cookies*.txt
