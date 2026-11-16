@@ -217,6 +217,57 @@ class PlaybackTests(unittest.IsolatedAsyncioTestCase):
         await self.bot.finish_track(1, old_token, None)
         self.bot.play_next.assert_not_awaited()
 
+    async def test_temporary_voice_leave_preserves_queue_and_playback(self):
+        self.bot._connection.user = SimpleNamespace(id=99)
+        token = self.bot.playback_tokens[1] = object()
+        self.bot.play_next = AsyncMock()
+        member = SimpleNamespace(id=99, guild=SimpleNamespace(id=1))
+        with patch('main.asyncio.sleep', new_callable=AsyncMock):
+            await self.bot.on_voice_state_update(member, SimpleNamespace(channel=object()), SimpleNamespace(channel=None))
+        self.assertEqual(len(self.bot.queues[1]), 2)
+        self.assertIs(self.bot.playback_tokens[1], token)
+
+    async def test_reconnect_preserves_callback_and_advances_to_next_track(self):
+        self.bot._connection.user = SimpleNamespace(id=99)
+        await self.bot.play_next(1)
+        token = self.bot.playback_tokens[1]
+        self.vc.is_connected.return_value = False
+        member = SimpleNamespace(id=99, guild=SimpleNamespace(id=1))
+
+        async def reconnect(_):
+            self.vc.is_connected.return_value = True
+
+        with patch('main.asyncio.sleep', side_effect=reconnect):
+            await self.bot.on_voice_state_update(member, SimpleNamespace(channel=object()), SimpleNamespace(channel=None))
+        self.assertIs(self.bot.playback_tokens[1], token)
+        self.vc.is_playing.return_value = False
+        await self.bot.finish_track(1, token, None)
+        self.assertEqual(self.bot.current_song[1]['id'], 'two')
+        self.assertEqual(self.vc.play.call_count, 2)
+
+    async def test_reconnect_restarts_queue_when_previous_player_already_finished(self):
+        self.bot._connection.user = SimpleNamespace(id=99)
+        self.vc.is_connected.return_value = False
+        member = SimpleNamespace(id=99, guild=SimpleNamespace(id=1))
+
+        async def reconnect(_):
+            self.vc.is_connected.return_value = True
+
+        with patch('main.asyncio.sleep', side_effect=reconnect):
+            await self.bot.on_voice_state_update(member, SimpleNamespace(channel=object()), SimpleNamespace(channel=None))
+        self.vc.play.assert_called_once()
+        self.assertEqual(self.bot.current_song[1]['id'], 'one')
+
+    async def test_permanent_voice_leave_cleans_state_after_grace_period(self):
+        self.bot._connection.user = SimpleNamespace(id=99)
+        self.vc.is_connected.return_value = False
+        member = SimpleNamespace(id=99, guild=SimpleNamespace(id=1))
+        with patch('main.asyncio.sleep', new_callable=AsyncMock) as sleep:
+            await self.bot.on_voice_state_update(member, SimpleNamespace(channel=object()), SimpleNamespace(channel=None))
+        self.assertEqual(sleep.await_count, 45)
+        sleep.assert_awaited_with(1)
+        self.assertFalse(self.bot.queues[1])
+
 
 if __name__ == '__main__':
     unittest.main()

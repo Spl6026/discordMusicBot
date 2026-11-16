@@ -275,6 +275,21 @@ class MusicBot(discord.Client):
 
     async def on_voice_state_update(self, member, before, after):
         if self.user and member.id == self.user.id and before.channel and not after.channel:
+            # discord.py leaves and rejoins the channel during a full reconnect.
+            # Keep the queue/token alive until recovery or a confirmed timeout.
+            guild_id = member.guild.id
+            generation = self.generations.get(guild_id, 0)
+            for _ in range(45):
+                await asyncio.sleep(1)
+                if self.shutting_down or self.generations.get(guild_id, 0) != generation:
+                    return
+                guild = self.get_guild(guild_id)
+                vc = guild.voice_client if guild else None
+                if vc and vc.is_connected():
+                    logger.info('語音連線恢復，保留佇列並檢查接續播放: guild=%s', guild_id)
+                    await self.play_next(guild_id)
+                    return
+            logger.warning('語音離線超過重連寬限期，清理伺服器 %s 的播放狀態', guild_id)
             self.cleanup_guild_state(member.guild.id)
             return
         guild_id = member.guild.id
